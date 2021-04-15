@@ -19,9 +19,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
 Route::get('/player/program/{id}', function ($id) {
-    Redis::set($id, 'program json');
-    echo Redis::get($id);
+    //$string = file_get_contents("/home/muratsalakhov/Загрузки/propusk.json");
+    //$json_a = json_decode($string, true);
+    //Redis::set($id, $string);
+    //Redis::bgsave();
+    $result = Redis::get($id);
+    echo json_decode($result, true);
     //return view('welcome');
 });
