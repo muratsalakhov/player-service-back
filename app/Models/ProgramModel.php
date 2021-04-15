@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use phpDocumentor\Reflection\Types\Resource_;
 
-class Program //extends Model
+class ProgramModel extends Model
 {
-    //use HasFactory;
 
     protected $primaryKey;
-    protected $images;
     protected $zip;
-    protected $body;
+    protected $images;
+    protected $programBody;
 
-    protected function getProgramByUrl(string $url) {
+    public function getProgramByUrl(string $url) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -36,3 +34,5 @@ class Program //extends Model
         }
     }
 };
+
+unzipProgram();
