@@ -28,3 +28,8 @@ Route::get('/player/program/{id}', function ($id) {
     echo json_decode($result, true);
     //return view('welcome');
 });
+
+Route::get('/program/{id}', function ($id) {
+    $result = Redis::get($id);
+    return response($result, 200)->header('Content-Type', 'application/json');
+});
