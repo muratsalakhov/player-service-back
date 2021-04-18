@@ -33,3 +33,22 @@ Route::get('/program/{id}', function ($id) {
     $result = Redis::get($id);
     return response($result, 200)->header('Content-Type', 'application/json');
 });
+
+Route::get('/script/mongo/', function () {
+    //$result = '{' . Redis::get(1) . '}';
+    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-script-mongo.json");
+    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
+});
+
+Route::get('/chapter/mongo/', function () {
+    //$result = '{' . Redis::get(1) . '}';
+    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo.json");
+    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
+});
+
+Route::get('/chapter/mongo/{id}', function () {
+    //$result = '{' . Redis::get(1) . '}';
+    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
+    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
+});
+
