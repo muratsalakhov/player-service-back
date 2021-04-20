@@ -45,6 +45,5 @@ Route::get('data/{name}', function ($name) {
     //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/" . $name);
     //Storage::put('public/images/image2.png', $string);
     $contents = Storage::get('/public/test-img/' . $name);
-    //return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
-    return response($contents);
+    return response($contents, 200)->header('Content-Type', 'image/png');
 });

@@ -34,21 +34,39 @@ Route::get('/program/{id}', function ($id) {
     return response($result, 200)->header('Content-Type', 'application/json');
 });
 
+// PLAYER WITHOUT CHAPTERS
+
+Route::get('/new/script/mongo/', function () {
+    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-script-mongo.json");
+    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
+});
+
+Route::get('/script/mongo/5fc13fcaaa303a46ead63656', function () {
+    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new.json");
+    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
+});
+
+Route::get('/new/chapter/mongo/{id}', function () {
+    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
+    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
+});
+
+// OLD PLAYER ROUTES
+
 Route::get('/script/mongo/', function () {
-    //$result = '{' . Redis::get(1) . '}';
     $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-script-mongo.json");
     return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
 });
 
 Route::get('/chapter/mongo/', function () {
-    //$result = '{' . Redis::get(1) . '}';
     $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo.json");
     return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
 });
 
 Route::get('/chapter/mongo/{id}', function () {
-    //$result = '{' . Redis::get(1) . '}';
-    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
+    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new.json");
     return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
 });
+
+
 
