@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
+use WebPConvert\WebPConvert;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,16 +35,49 @@ Route::get('/test', function () {
     //Redis::bgsave();
     //$result = Redis::get(1);
     //$programs = Redis::keys("program:*");
-    return response(Redis::get("program:5f930b092ad7da32748cb8bc"), 200)->header('Content-Type', 'application/json');
+    $src = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/5d5c8548-2b00-4136-a0c7-4345ca6a7204.png';
+    $src2 = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/5d5c8548-2b00-4136-a0c7-4345ca6a7204.webp';
+
+
+    WebPConvert::convert($src, $src2, []);
+
+    //$img = imageCreateFromPng($src);
+    //imageWebp($img, $info['dirname'] . '/' . $info['filename'] . '.' . 'webp', 100);
+    //imagedestroy($img);
+    return true; //response(Redis::get("program:5f930b092ad7da32748cb8bc"), 200)->header('Content-Type', 'application/json');
     //echo json_decode(Redis::get("program:5f930b092ad7da32748cb8bc"), true);
     //echo print_r();
 });
 
-Route::get('data/{name}', function ($name) {
+/*Route::get('data/{name}', function ($name) {
+    //$result = '{' . Redis::get(1) . '}';
+    //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
+    //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/" . $name);
+    //Storage::put('public/images/image2.png', $string);
+    $contents = Storage::get('/public/test-img/' . $name);
+    return response($contents, 200)->header('Content-Type', 'image/webp');
+});*/
+
+Route::get('/data/{name}', function ($name) {
+    //$result = '{' . Redis::get(1) . '}';
+    //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
+    //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/" . $name);
+    //Storage::put('public/images/image2.png', $string);
+    $contents = Storage::get('/public/test-img/' . $name . '.webp');
+    //$src = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/' . $name;
+    //$src2 = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/' . $name . '.webp';
+
+    //WebPConvert::convert($src, $src2, []);
+    //Storage::put('/public/test-webp/', imageWebp(imageCreateFromPng($contents)));
+
+    return response($contents, 200)->header('Content-Type', 'image/webp');
+});
+
+/*Route::get('data/{name}', function ($name) {
     //$result = '{' . Redis::get(1) . '}';
     //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
     //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/" . $name);
     //Storage::put('public/images/image2.png', $string);
     $contents = Storage::get('/public/test-img/' . $name);
     return response($contents, 200)->header('Content-Type', 'image/png');
-});
+});*/
