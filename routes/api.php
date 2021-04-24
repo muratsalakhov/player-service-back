@@ -68,7 +68,8 @@ Route::get('/chapter/mongo/{id}', function () {
     return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
 });
 
-Route::post('/api/statistic/{id}', function (Request $request, $id) {
+// стистика прохождения
+Route::post('/statistic/{id}', function (Request $request, $id) {
     $result = Redis::set("statistics:" . $id, $request->getContent());
     return $result;
 });
