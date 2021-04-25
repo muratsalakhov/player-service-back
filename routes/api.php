@@ -47,9 +47,8 @@ Route::get('/player/script/{id}', function ($id) {
     }
 });
 
-// стистика прохождения
-Route::post('/statistic/{id}', function (Request $request, $id) {
-    $result = Redis::set("statistics:" . $id, $request->getContent());
-    return $result;
+// Сохранения статистики прохождения
+Route::post('/player/statistic/{id}', function (Request $request, $id) {
+    return Redis::set("statistics:" . $id . time(), $request->getContent());
 });
 

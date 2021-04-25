@@ -58,6 +58,10 @@ Route::get('/test', function () {
     return response($contents, 200)->header('Content-Type', 'image/webp');
 });*/
 
+Route::get('img/{name}', function ($name) {
+    return response(Storage::get('/public/images/' . $name), 200)->header('Content-Type', 'image/png');
+});
+
 Route::get('/data/{name}', function ($name) {
     //$result = '{' . Redis::get(1) . '}';
     //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
