@@ -19,53 +19,32 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/player/program/{id}', function ($id) {
-    //$string = file_get_contents("/home/muratsalakhov/Загрузки/propusk.json");
-    //$json_a = json_decode($string, true);
-    //Redis::set($id, $string);
-    //Redis::bgsave();
-    $result = Redis::get($id);
-    echo json_decode($result, true);
-    //return view('welcome');
+Route::get('/put-program/', function () {
+    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new-2.json");
+    Redis::set("script:5fc13fcaaa303a46ead6365621", $script);
+    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
 });
 
-Route::get('/program/{id}', function ($id) {
-    $result = Redis::get($id);
-    return response($result, 200)->header('Content-Type', 'application/json');
+// Получить все сценарии из бд
+Route::get('/player/script/', function () {
+    $keys = Redis::keys("script:*");
+    $keys = array_map(function ($k){
+        return str_replace('laravel_database_', '', $k);
+    }, $keys);
+    $scripts = Redis::mget($keys);
+    foreach ($scripts as $scriptId => $script) {
+        $scripts[$scriptId] = json_decode($script);
+    }
+    return response($scripts, 200)->header('Content-Type', 'application/json');
 });
 
-// PLAYER WITHOUT CHAPTERS
-
-Route::get('/new/script/mongo/', function () {
-    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-script-mongo.json");
-    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
-});
-
-Route::get('/script/mongo/5fc13fcaaa303a46ead63656', function () {
-    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new.json");
-    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
-});
-
-Route::get('/new/chapter/mongo/{id}', function () {
-    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
-    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
-});
-
-// OLD PLAYER ROUTES
-
-Route::get('/script/mongo/', function () {
-    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-script-mongo.json");
-    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
-});
-
-Route::get('/chapter/mongo/', function () {
-    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo.json");
-    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
-});
-
-Route::get('/chapter/mongo/{id}', function () {
-    $string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new.json");
-    return response(json_decode($string, true), 200)->header('Content-Type', 'application/json');
+// Получить сценарий по id
+Route::get('/player/script/{id}', function ($id) {
+    if (Redis::exists("script:" . $id)) {
+        return response(json_decode(Redis::get("script:" . $id), true), 200)->header('Content-Type', 'application/json');
+    } else {
+        return response('{"status" : "Script not found"}', 404)->header('Content-Type', 'application/json');
+    }
 });
 
 // стистика прохождения
