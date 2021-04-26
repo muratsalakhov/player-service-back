@@ -17,7 +17,7 @@ class ProgramController extends Controller
         $program = new ProgramModel();
 
         if (!empty(Redis::get($programId))) {
-            $res = $client->request('POST', 'https://url_to_the_admin_api', [
+            $res = $client->request('POST', 'url_to_the_admin_api', [
                 'program_id' => $programId,
                 'user_id' => $userToken,
                 'program_exist' => true
@@ -27,20 +27,20 @@ class ProgramController extends Controller
             if ($result->{'permission'} === true) {
                 return response()->json(Redis::get($programId), 200);
             } else {
-                return response()->json("", 404);
+                return response()->json('{"status" : "Permission denied"}', 403);
             }
         } else {
-            $res = $client->request('POST', 'https://url_to_the_admin_api', [
+            $res = $client->request('POST', 'url_to_the_admin_api', [
                 'program_id' => $programId,
                 'user_id' => $userToken,
                 'program_exist' => false
             ]);
-            $result= $res->getBody();
+            $result= json_decode($res->getBody()->getContents());
 
             if (!empty($result->{'program_url'})) {
                 $program->getProgramByUrl($result->{'program_url'});
                 // unzip and return program
-                //Redis::set($programId, $program->programBody);
+                Redis::set($programId, $program->getProgramScript);
                 return response()->json(Redis::get($programId), 200);
             }
             return response()->json("", 404);

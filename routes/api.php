@@ -49,6 +49,6 @@ Route::get('/player/script/{id}', function ($id) {
 
 // Сохранения статистики прохождения
 Route::post('/player/statistic/{id}', function (Request $request, $id) {
-    return Redis::set("statistics:" . $id . time(), $request->getContent());
+    return Redis::set("statistics:" . $id . ":" . time(), $request->getContent());
 });
 
