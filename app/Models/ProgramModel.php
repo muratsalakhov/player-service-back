@@ -22,29 +22,15 @@ class ProgramModel
         curl_close($ch);
     }
 
-    public function unzipProgram() {
-        $zip = new \ZipArchive;
-        if ($zip->open('./storage/app/public/zip/test.zip') === TRUE) {
-            $zip->extractTo('./storage/app/public/zip-images', '*.png');
-            $zip->extractTo('./storage/app/public/zip-json', '*.json');
+    public static function unzipProgram() {
+        $zip = new ZipArchive;
+        if ($zip->open(storage_path() . '/app/public/zip/test.zip') === TRUE) {
+            $zip->extractTo(storage_path() . '/app/public/zip-images', '*.png');
+            $zip->extractTo(storage_path() . '/app/public/zip-json', 'Script.json');
             $zip->close();
-            echo 'готово';
+            return 'готово';
         } else {
-            echo 'ошибка';
+            return 'ошибка';
         }
     }
 };
-
-function unzipProgram() {
-    $zip = new ZipArchive;
-    if ($zip->open('./storage/app/public/zip/test.zip') === TRUE) {
-        $zip->extractTo('./storage/app/public/zip-images', '*.png');
-        $zip->extractTo('./storage/app/public/zip-json', '*.json');
-        $zip->close();
-        echo 'готово';
-    } else {
-        echo 'ошибка';
-    }
-}
-
-unzipProgram();
