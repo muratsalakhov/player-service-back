@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Redis;
+use App\Services;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\Redis;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('/test/', function () {
+    $program = new Services\ProgramHandler();
+    $program->unzipProgram('http://127.0.0.1:82/test');
+    return $program->unzipProgram('http://127.0.0.1:82/test');
 });
 
 Route::get('/put-program/', function () {

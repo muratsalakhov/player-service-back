@@ -30,8 +30,8 @@ Route::get('/init', function () {
     echo $result;
 });
 
-Route::get('/test', function () {
-    //$string = file_get_contents(dirname(getcwd()) . '/storage/app/init_programs/propusk.json');
+Route::get('/test/', function () {
+    return file_get_contents('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/zip/test.zip');
     //$json_a = json_decode($string, true);
     //Redis::set("program:5f930b092ad7da32748cb8bc", $string);
     //Redis::bgsave();
@@ -48,7 +48,7 @@ Route::get('/test', function () {
     //$img = imageCreateFromPng($src);
     //imageWebp($img, $info['dirname'] . '/' . $info['filename'] . '.' . 'webp', 100);
     //imagedestroy($img);
-    return ProgramHandler::unzipProgram();; //response(Redis::get("program:5f930b092ad7da32748cb8bc"), 200)->header('Content-Type', 'application/json');
+    //return ProgramHandler::unzipProgram(); //response(Redis::get("program:5f930b092ad7da32748cb8bc"), 200)->header('Content-Type', 'application/json');
     //echo json_decode(Redis::get("program:5f930b092ad7da32748cb8bc"), true);
     //echo print_r();
 });

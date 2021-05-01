@@ -5,38 +5,49 @@ namespace App\Services;
 class ProgramHandler
 {
 
-    protected $programKey = "8c8c";
-    protected $programZip;
-    protected $images;
-    protected $programScript;
+    public $programKey = "8c8c";
+    public $programZip;
+    public $images;
+    public $programScript;
 
-    public function getProgramByUrl(string $url) {
+    public function downloadProgramByUrl(string $url) {
+
+        $timestamp = microtime(true);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
-        $this->programZip = curl_exec($ch);
+        //$this->programZip =
+        curl_exec($ch);
         curl_close($ch);
-        //$this->unzipProgram();
+        if ($this->programZip === false) {
+            return array("status" => "Program download by url failed");
+        } else {
+            //$this->unzipProgram($this->programZip);
+            return microtime(true) - $timestamp;
+            return;
+        }
     }
 
-    public static function unzipProgram() {
-        $timestamp = time();
+    public function unzipProgram($zipUrl = '/app/public/zip/test.zip') {
+        $timestamp = microtime(true);
         $zip = new \ZipArchive();
-        if ($zip->open(storage_path() . '/app/public/zip/test.zip') === TRUE) {
-            for($i = 0; $i < $zip->numFiles; $i++) {
-                $filename = $zip->getNameIndex($i);
-                if ($filename == 'Script.json') {
-                    //$this->programScript = $zip->getFromIndex($i);
-                } else if (preg_match('/\.png$/', $filename)) {
-                    $zip->extractTo(storage_path() . "/app/public/zip-images/", $filename);
-                    WebpConverter::convert(array($filename));
-                }
-            }
-            $zip->close();
-            return $timestamp - time();
-        } else {
-            return 'ошибка';
+
+        if ($zip->open(storage_path() . $zipUrl) != true) {
+            return array("status" => "Program unzip operation failed");
         }
+
+        for($i = 0; $i < $zip->numFiles; $i++) {
+            $filename = $zip->getNameIndex($i);
+            if (preg_match('/\.png$/', $filename)) {
+                $zip->extractTo(storage_path() . "/app/public/zip-images/", $filename);
+                //WebpConverter::convert(array($filename));
+            } else if (preg_match('/\.json$/', $filename)) {
+                $zip->extractTo(storage_path() . "/app/public/zip-json/", $filename);
+            }
+        }
+        $this->programScript = "ok";
+        $zip->close();
+        return microtime(true) - $timestamp;
     }
 };
