@@ -32,6 +32,21 @@ Route::get('/put-program/', function () {
     return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
 });
 
+Route::get('/chapter/mongo/', function () {
+    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo.json");
+    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
+});
+
+Route::get('/chapter/mongo/{id}', function () {
+    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
+    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
+});
+
+Route::get('/script/mongo/', function () {
+    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-scripte-mongo-old.json");
+    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
+});
+
 // Получить все сценарии из бд
 Route::get('/player/script/', function () {
     $keys = Redis::keys("script:*");
