@@ -6,21 +6,51 @@ use WebPConvert\WebPConvert;
 
 class WebpConverter {
 
-    public static function convertByName(array $images) {
-        $storageLink = storage_path() . "/app/public/zip-images/";
-        foreach ($images as $image) {
-            try {
-                WebPConvert::convert($storageLink . $image, $storageLink . $image . ".webp", []);
-            } catch (e $ex) {
-                return json_encode(array("status" => $ex));
-            }
+    public static function convertToWebp($imageUrl) {
+        //$storageLink = storage_path() . "/app/public/zip-images/";
+        //foreach ($images as $image) {
+        try {
+            WebPConvert::convert($imageUrl, $imageUrl . ".webp", [
+                'png' => [
+                    'alpha-quality' => 100
+                ],
+            ]);
+        } catch (e $ex) {
+            return json_encode(array("status" => $ex));
         }
+        //}
     }
 
-    public static function frameConvert() {
+    public static function programFrameConvert($programJson) {
         $timestamp = microtime(true);
-        $image1 = imagecreatefrompng('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/webp-images/image1.png');
-        $image2 = imagecreatefrompng('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/webp-images/image2.png');
+        $program = json_decode(file_get_contents($programJson), true);
+        $newProgram = [];
+
+        foreach ($program['frames'] as $currentFrame) {
+            $newProgram[$currentFrame['uid']]['pictureLink'] = $currentFrame['pictureLink'];
+            foreach ($currentFrame['actions'] as $action) {
+                $newProgram[$currentFrame['uid']]['nextFrames'][] = $action['nextFrame']['uid'];
+                if ($action['nextFrame']['uid'] !== null) {
+                    $newProgram[$action['nextFrame']['uid']]['prevFrames'][] = $currentFrame['uid'];
+                }
+            }
+        }
+
+        foreach ($newProgram as $frame) {
+            if (isset($frame['prevFrames']) && count($frame['prevFrames']) === 1) {
+                $src = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/';
+                self::frameConvert($src . $newProgram[$frame['prevFrames'][0]]['pictureLink'],$src . $frame['pictureLink']);
+            }
+        }
+
+        return microtime(true) - $timestamp;
+        //return $newProgram;
+    }
+
+    public static function frameConvert($startImage, $finishImage) {
+        //$timestamp = microtime(true);
+        $image1 = imagecreatefrompng($startImage);
+        $image2 = imagecreatefrompng($finishImage);
         $width = imagesx($image1);
         $height = imagesy($image1);
 
@@ -28,10 +58,8 @@ class WebpConverter {
         $transparent = imagecolorallocatealpha($image3, 0, 0, 0, 127);
         imagefill($image3, 0, 0, $transparent);
 
-        //$alpha = imagecolorallocatealpha($image3, 255, 255, 255, 127);
         for($x = 0; $x < $width; $x++) {
             for($y = 0; $y < $height; $y++) {
-                // pixel color at (x, y)
                 if (imagecolorat($image1, $x, $y) !== imagecolorat($image2, $x, $y)) {
                     $rgb = imagecolorsforindex($image2, imagecolorat($image2, $x, $y));
 
@@ -40,10 +68,10 @@ class WebpConverter {
                 }
             }
         }
-        // Restore Alpha
         imageAlphaBlending($image3, true);
         imageSaveAlpha($image3, true);
-        imagepng($image3, '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/webp-images/image3.png');
-        return microtime(true) - $timestamp;
+        imagepng($image3, $finishImage . '.png');
+        self::convertToWebp($finishImage . '.png');
+        //return microtime(true) - $timestamp;
     }
 };
