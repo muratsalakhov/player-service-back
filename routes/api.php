@@ -28,7 +28,7 @@ Route::get('/test/', function () {
 
 Route::get('/put-program/', function () {
     $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new-2.json");
-    Redis::set("script:5fc13fcaaa303a46ead6365621", $script);
+    Redis::set("script:5fc13fcaaa303a46ead63656", $script);
     return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
 });
 

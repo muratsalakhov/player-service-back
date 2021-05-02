@@ -76,12 +76,12 @@ Route::get('/data/{name}', function ($name) {
     //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
     //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/" . $name);
     //Storage::put('public/images/image2.png', $string);
-    $contents = Storage::get('/public/test-img/' . $name . '.png');
+    $contents = Storage::get('/public/test-img/' . $name . '.png.webp');
     //$src = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/' . $name;
     //$src2 = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/' . $name . '.webp';
 
     //WebPConvert::convert($src, $src2, []);
     //Storage::put('/public/test-webp/', imageWebp(imageCreateFromPng($contents)));
 
-    return response($contents, 200)->header('Content-Type', 'image/png');
+    return response($contents, 200)->header('Content-Type', 'image/webp');
 });
