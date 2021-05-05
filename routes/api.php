@@ -22,8 +22,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/test/', function () {
     $program = new Services\ProgramHandler();
-    $program->unzipProgram('http://127.0.0.1:82/test');
-    return $program->unzipProgram('http://127.0.0.1:82/test');
+    //$program->unzipProgram('http://127.0.0.1:82/test');
+    return $program->downloadProgramByUrl();
 });
 
 Route::get('/put-program/', function () {

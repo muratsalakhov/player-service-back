@@ -10,40 +10,56 @@ class ProgramHandler
     public $images;
     public $programScript;
 
-    public function downloadProgramByUrl(string $url) {
-
+    public function downloadProgramByUrl(string $url = 'https://drive.google.com/u/0/uc?id=1o8j3VTQRefEJ1W0oZOQMCz3HHMW5gEIB&export=download') {
+        set_time_limit(0);
         $timestamp = microtime(true);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        //$this->programZip =
-        curl_exec($ch);
+        $zipFile = "wordpress2.zip"; // Rename .zip file
+
+        $fp = fopen('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/zip/wordpress3.zip', 'w');
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+
+        $data = curl_exec($ch);
+
         curl_close($ch);
-        if ($this->programZip === false) {
+        fclose($fp);
+
+        /*
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $raw_file_data = curl_exec($ch);
+        curl_close($ch);
+        file_put_contents(storage_path() . '/app/public/zip/Desktop.zip', $raw_file_data);*/
+        /*if ($this->programZip === false) {
             return array("status" => "Program download by url failed");
         } else {
             //$this->unzipProgram($this->programZip);
             return microtime(true) - $timestamp;
             return;
-        }
+        }*/
+        //$this->unzipProgram('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/zip/Desktop.zip');
+        return microtime(true) - $timestamp;
     }
 
-    public function unzipProgram($zipUrl = '/app/public/zip/test.zip') {
+    public function unzipProgram($zipUrl = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/zip/Desktop.zip') {
         $timestamp = microtime(true);
         $zip = new \ZipArchive();
-
-        if ($zip->open(storage_path() . $zipUrl) != true) {
+        $zip->open($zipUrl);
+        /*if ($zip->open($zipUrl) != true) {
             return array("status" => "Program unzip operation failed");
-        }
+        }*/
 
         for($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);
             if (preg_match('/\.png$/', $filename)) {
-                $zip->extractTo(storage_path() . "/app/public/zip-images/", $filename);
+                $zip->extractTo(storage_path() . "/app/public/zip/zip-images/", $filename);
                 //WebpConverter::convert(array($filename));
             } else if (preg_match('/\.json$/', $filename)) {
-                $zip->extractTo(storage_path() . "/app/public/zip-json/", $filename);
+                $zip->extractTo(storage_path() . "/app/public/zip/zip-json/", $filename);
             }
         }
         $this->programScript = "ok";
