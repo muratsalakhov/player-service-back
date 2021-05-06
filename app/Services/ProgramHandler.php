@@ -10,6 +10,7 @@ class ProgramHandler
     public $images;
     public $programScript;
 
+    // скачать zip архив по ссылке
     public function downloadProgramByUrl(string $url = 'https://drive.google.com/u/0/uc?id=1o8j3VTQRefEJ1W0oZOQMCz3HHMW5gEIB&export=download') {
         set_time_limit(0);
         $timestamp = microtime(true);
@@ -45,13 +46,11 @@ class ProgramHandler
         return microtime(true) - $timestamp;
     }
 
+    // распаковать zip архив
     public function unzipProgram($zipUrl = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/zip/Desktop.zip') {
         $timestamp = microtime(true);
         $zip = new \ZipArchive();
         $zip->open($zipUrl);
-        /*if ($zip->open($zipUrl) != true) {
-            return array("status" => "Program unzip operation failed");
-        }*/
 
         for($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);
@@ -62,8 +61,7 @@ class ProgramHandler
                 $zip->extractTo(storage_path() . "/app/public/zip/zip-json/", $filename);
             }
         }
-        $this->programScript = "ok";
         $zip->close();
-        return microtime(true) - $timestamp;
+        return json_encode(array("status" => "ok"));
     }
 };

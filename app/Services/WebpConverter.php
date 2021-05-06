@@ -6,6 +6,7 @@ use WebPConvert\WebPConvert;
 
 class WebpConverter {
 
+    // конвертация изображения в Webp
     public static function convertToWebp($imageUrl) {
         //$storageLink = storage_path() . "/app/public/zip-images/";
         //foreach ($images as $image) {
@@ -18,9 +19,9 @@ class WebpConverter {
         } catch (e $ex) {
             return json_encode(array("status" => $ex));
         }
-        //}
     }
 
+    // сжатие изображений программы
     public static function programFrameConvert($programJson) {
         $timestamp = microtime(true);
         $program = json_decode(file_get_contents($programJson), true);
@@ -44,9 +45,9 @@ class WebpConverter {
         }
 
         return microtime(true) - $timestamp;
-        //return $newProgram;
     }
 
+    // попиксельное вычитание двух изображений
     public static function frameConvert($startImage, $finishImage) {
         //$timestamp = microtime(true);
         $image1 = imagecreatefrompng($startImage);
