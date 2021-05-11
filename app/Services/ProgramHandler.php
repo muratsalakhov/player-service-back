@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Redis;
+
 class ProgramHandler
 {
 
@@ -11,14 +13,12 @@ class ProgramHandler
     public $programScript;
 
     // скачать zip архив по ссылке
-    public function downloadProgramByUrl(string $url = 'http://127.0.0.1:84/zip/') {
+    public function downloadProgramByUrl(string $url = 'http://127.0.0.1:84/zip/', string $programPath) {
         set_time_limit(0);
         $timestamp = microtime(true);
 
-        $zipFile = "/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/zip/test.zip"; // Rename .zip file
-        $zipResource = fopen($zipFile, "w");
+        $zipResource = fopen($programPath . 'zip.zip', "w");
 
-        // Get The Zip File From Server
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
@@ -30,32 +30,33 @@ class ProgramHandler
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($ch, CURLOPT_TIMEOUT,10);
         curl_setopt($ch, CURLOPT_FILE, $zipResource);
-
         $page = curl_exec($ch);
 
-        $this->unzipProgram($zipFile);
+        $this->unzipProgram($programPath);
         return microtime(true) - $timestamp;
     }
 
     // распаковать zip архив
-    public function unzipProgram($zipUrl) {
-        $timestamp = microtime(true);
+    public function unzipProgram($programPath) {
         $zip = new \ZipArchive();
-        $zip->open($zipUrl);
+        $zip->open($programPath . 'zip.zip');
 
         for($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);
             if (preg_match('/\.png$/', $filename)) {
-                $zip->extractTo(storage_path() . "/app/public/zip/zip-images/", $filename);
-                //WebpConverter::convert(array($filename));
+                $zip->extractTo($programPath . "/images/", $filename);
             } else if (preg_match('/\.json$/', $filename)) {
-                $this->programScript = storage_path() . "/app/public/zip/zip-json/" . $filename;
-                $zip->extractTo(storage_path() . "/app/public/zip/zip-json/", $filename);
+                $this->programScript = $programPath . "/json/" . $filename;
+                $zip->extractTo($programPath . "/json/", $filename);
             }
         }
         $zip->close();
 
-        ImageConverter::programFrameConvert($this->programScript);
+        try {
+            unlink($programPath . 'zip.zip');
+        } catch (Throwable $e) {
+
+        }
 
         return json_encode(array("status" => "ok"));
     }

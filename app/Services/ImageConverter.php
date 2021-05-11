@@ -47,7 +47,6 @@ class ImageConverter {
 
     // попиксельное вычитание двух изображений
     public static function frameConvert($startImage, $finishImage) {
-        //$timestamp = microtime(true);
         $image1 = imagecreatefrompng($startImage);
         $image2 = imagecreatefrompng($finishImage);
         $width = imagesx($image1);
@@ -71,6 +70,5 @@ class ImageConverter {
         imageSaveAlpha($image3, true);
         imagepng($image3, $finishImage . '.png');
         self::convertToWebp($finishImage . '.png');
-        //return microtime(true) - $timestamp;
     }
 };

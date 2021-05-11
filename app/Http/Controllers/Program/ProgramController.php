@@ -8,16 +8,16 @@ use Illuminate\Http\Request;
 use App\Models\ProgramModel;
 use Illuminate\Support\Facades\Redis;
 use GuzzleHttp\Client;
+use App\Services;
 
 class ProgramController extends Controller
 {
     public function getProgram($programId, $userToken) {
 
-        $client = new Client();
-        $program = new ProgramModel();
+        $httpClient = new Client();
 
         if (!empty(Redis::get($programId))) {
-            $res = $client->request('POST', 'url_to_the_admin_api', [
+            $res = $httpClient->request('POST', 'url_to_the_admin_api', [
                 'program_id' => $programId,
                 'user_id' => $userToken,
                 'program_exist' => true
@@ -30,17 +30,18 @@ class ProgramController extends Controller
                 return response()->json('{"status" : "Permission denied"}', 403);
             }
         } else {
-            $res = $client->request('POST', 'url_to_the_admin_api', [
+            $res = $httpClient->request('POST', 'url_to_the_admin_api', [
                 'program_id' => $programId,
                 'user_id' => $userToken,
                 'program_exist' => false
             ]);
             $result= json_decode($res->getBody()->getContents());
-
             if (!empty($result->{'program_url'})) {
-                $program->getProgramByUrl($result->{'program_url'});
+                $programPath = storage_path() . '/' . $programId . '/';
+                Services\ProgramHandler::downloadProgramByUrl($result->{'program_url'}, $programPath);
                 // unzip and return program
-                Redis::set($programId, $program->getProgramScript);
+                $pathToScript = storage_path() . '/' . $programId . '/Script.json';
+                Redis::set($programId, file_get_contents($pathToScript));
                 return response()->json(Redis::get($programId), 200);
             }
             return response()->json("", 404);
