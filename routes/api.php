@@ -74,3 +74,16 @@ Route::post('/player/statistic/{id}', function (Request $request, $id) {
     return Redis::set("statistics:" . $id . ":" . time(), $request->getContent());
 });
 
+// Сохранения статистики прохождения
+Route::get('/player/statistic/{id}', function ($id) {
+    $keys = Redis::keys("statistics:" . $id . ":*");
+    $keys = array_map(function ($k){
+        return str_replace('laravel_database_', '', $k);
+    }, $keys);
+    $scripts = Redis::mget($keys);
+    foreach ($scripts as $scriptId => $script) {
+        $scripts[$scriptId] = json_decode($script);
+    }
+    return response($scripts, 200)->header('Content-Type', 'application/json');
+});
+

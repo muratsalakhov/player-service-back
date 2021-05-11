@@ -4,12 +4,10 @@ namespace App\Services;
 
 use WebPConvert\WebPConvert;
 
-class WebpConverter {
+class ImageConverter {
 
     // конвертация изображения в Webp
     public static function convertToWebp($imageUrl) {
-        //$storageLink = storage_path() . "/app/public/zip-images/";
-        //foreach ($images as $image) {
         try {
             WebPConvert::convert($imageUrl, $imageUrl . ".webp", [
                 'png' => [
@@ -39,7 +37,7 @@ class WebpConverter {
 
         foreach ($newProgram as $frame) {
             if (isset($frame['prevFrames']) && count($frame['prevFrames']) === 1) {
-                $src = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/';
+                $src = storage_path() . "/app/public/zip/zip-images/";
                 self::frameConvert($src . $newProgram[$frame['prevFrames'][0]]['pictureLink'],$src . $frame['pictureLink']);
             }
         }
