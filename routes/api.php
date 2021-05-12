@@ -20,31 +20,23 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// ТЕСТ. Скачать zip
 Route::get('/test/', function () {
-    $program = new Services\ProgramHandler();
-    //$program->unzipProgram('http://127.0.0.1:82/test');
-    return $program->downloadProgramByUrl();
+    return Services\ProgramHandler::downloadProgramByUrl('http://127.0.0.1:84/zip/', storage_path() . '/app/public/5fc13fcaaa303a46ead63656/');
 });
 
+// ТЕСТ. Загрузить программу
 Route::get('/put-program/', function () {
     $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new-2.json");
     Redis::set("script:5fc13fcaaa303a46ead63656", $script);
     return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
 });
 
-Route::get('/chapter/mongo/', function () {
-    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo.json");
-    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
-});
-
-Route::get('/chapter/mongo/{id}', function () {
-    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
-    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
-});
-
-Route::get('/script/mongo/', function () {
-    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-scripte-mongo-old.json");
-    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
+// Конвертировать изображения по переданному пути
+Route::put('/convert/', function (Request $request) {
+    $requestBody = json_decode($request->getContent(), true);
+    Services\ImageConverter::startConvert($requestBody['programPath']);
+    return response(array("status" => "ok"), 200)->header('Content-Type', 'application/json');
 });
 
 // Получить все сценарии из бд
