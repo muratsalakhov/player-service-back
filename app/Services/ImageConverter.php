@@ -6,23 +6,14 @@ use WebPConvert\WebPConvert;
 
 class ImageConverter {
 
-    // конвертация изображения в Webp
-    public static function convertToWebp($imageUrl) {
-        try {
-            WebPConvert::convert($imageUrl, $imageUrl . ".webp", [
-                'png' => [
-                    'alpha-quality' => 100
-                ],
-            ]);
-        } catch (e $ex) {
-            return json_encode(array("status" => $ex));
-        }
+    public static function startConvert($programPath) {
+        self::programFrameConvert($programPath);
     }
 
     // сжатие изображений программы
-    public static function programFrameConvert($programJson) {
+    public static function programFrameConvert($programPath) {
         $timestamp = microtime(true);
-        $program = json_decode(file_get_contents($programJson), true);
+        $program = json_decode(file_get_contents($programPath . 'json/Script.json'), true);
         $newProgram = [];
 
         foreach ($program['frames'] as $currentFrame) {
@@ -35,10 +26,10 @@ class ImageConverter {
             }
         }
 
+        $pngPath = $programPath . "images-png/";
         foreach ($newProgram as $frame) {
             if (isset($frame['prevFrames']) && count($frame['prevFrames']) === 1) {
-                $src = storage_path() . "/app/public/zip/zip-images/";
-                self::frameConvert($src . $newProgram[$frame['prevFrames'][0]]['pictureLink'],$src . $frame['pictureLink']);
+                self::frameConvert($pngPath . $newProgram[$frame['prevFrames'][0]]['pictureLink'],$pngPath . $frame['pictureLink']);
             }
         }
 
@@ -70,5 +61,22 @@ class ImageConverter {
         imageSaveAlpha($image3, true);
         imagepng($image3, $finishImage . '.png');
         self::convertToWebp($finishImage . '.png');
+        unlink($finishImage . '.png');
+    }
+
+
+    // конвертация изображения в Webp
+    public static function convertToWebp($imagePath) {
+        $webpPath = preg_replace('/\/images-png\//', '/images-webp/', $imagePath);
+        $webpPath = preg_replace('/\.png$/', '.webp', $webpPath);
+        try {
+            WebPConvert::convert($imagePath, $webpPath, [
+                'png' => [
+                    'alpha-quality' => 100
+                ],
+            ]);
+        } catch (\Throwable $ex) {
+            return json_encode(array("status" => $ex));
+        }
     }
 };

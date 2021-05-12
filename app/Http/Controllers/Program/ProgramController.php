@@ -17,7 +17,7 @@ class ProgramController extends Controller
         $httpClient = new Client();
 
         if (!empty(Redis::get($programId))) {
-            $res = $httpClient->request('POST', 'url_to_the_admin_api', [
+            $res = $httpClient->request('PUT', 'url_to_the_admin_api', [
                 'program_id' => $programId,
                 'user_id' => $userToken,
                 'program_exist' => true
@@ -30,7 +30,7 @@ class ProgramController extends Controller
                 return response()->json('{"status" : "Permission denied"}', 403);
             }
         } else {
-            $res = $httpClient->request('POST', 'url_to_the_admin_api', [
+            $res = $httpClient->request('PUT', 'url_to_the_admin_api', [
                 'program_id' => $programId,
                 'user_id' => $userToken,
                 'program_exist' => false
