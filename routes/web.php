@@ -30,45 +30,17 @@ Route::get('/init', function () {
     echo $result;
 });
 
-Route::get('/test2/', function () {
-    return ImageConverter::programFrameConvert('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new-2.json');
-});
+// Выдача изображений
+Route::get('/data/{id}/{name}', function ($id, $name) {
+    $programPath = storage_path() . '/app/public/' . $id . '/';
 
-Route::get('/zip/', function () {
-    /*$zip = new ZipArchive;
+    try {
+        return response(file_get_contents($programPath . 'images-webp/' . $name . '.webp'), 200)->header('Content-Type', 'image/webp');
+    } catch (Throwable $e) {}
 
-    $fileName = 'myNewFile.zip';
+    try {
+        return response(file_get_contents($programPath . 'images-png/' . $name), 200)->header('Content-Type', 'image/png');
+    } catch (Throwable $e) {}
 
-    if ($zip->open('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img.zip', ZipArchive::CREATE) === TRUE)
-    {
-        $files = File::files(public_path('myFiles'));
-
-        foreach ($files as $key => $value) {
-            $relativeNameInZipFile = basename($value);
-            $zip->addFile($value, $relativeNameInZipFile);
-        }
-
-        $zip->close();
-    }
-    */
-    return response()->download('/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img.zip');
-});
-
-Route::get('img/{name}', function ($name) {
-    return response(Storage::get('/public/images/' . $name), 200)->header('Content-Type', 'image/png');
-});
-
-Route::get('/data/{name}', function ($name) {
-    //$result = '{' . Redis::get(1) . '}';
-    //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id.json");
-    //$string = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/" . $name);
-    //Storage::put('public/images/image2.png', $string);
-    $contents = Storage::get('/public/test-img/' . $name . '.png.webp');
-    //$src = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/' . $name;
-    //$src2 = '/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/public/test-img/' . $name . '.webp';
-
-    //WebPConvert::convert($src, $src2, []);
-    //Storage::put('/public/test-webp/', imageWebp(imageCreateFromPng($contents)));
-
-    return response($contents, 200)->header('Content-Type', 'image/webp');
+    return response(array("status" => "File not found"), 404)->header('Content-Type', 'application/json');
 });
