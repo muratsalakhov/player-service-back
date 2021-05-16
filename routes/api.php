@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Redis;
+use App\Http\Controllers;
 use App\Services;
 
 /*
@@ -40,42 +41,14 @@ Route::put('/convert/', function (Request $request) {
 });
 
 // Получить все сценарии из бд
-Route::get('/player/script/', function () {
-    $keys = Redis::keys("script:*");
-    $keys = array_map(function ($k){
-        return str_replace('laravel_database_', '', $k);
-    }, $keys);
-    $scripts = Redis::mget($keys);
-    foreach ($scripts as $scriptId => $script) {
-        $scripts[$scriptId] = json_decode($script);
-    }
-    return response($scripts, 200)->header('Content-Type', 'application/json');
-});
+Route::get('/player/script/', [Controllers\ScriptController::class, 'getAll']);
 
 // Получить сценарий по id
-Route::get('/player/script/{id}', function ($id) {
-    if (Redis::exists("script:" . $id)) {
-        return response(json_decode(Redis::get("script:" . $id), true), 200)->header('Content-Type', 'application/json');
-    } else {
-        return response('{"status" : "Script not found"}', 404)->header('Content-Type', 'application/json');
-    }
-});
+Route::get('/player/script/{id}', [Controllers\ScriptController::class, 'getById']);
 
 // Сохранения статистики прохождения
-Route::post('/player/statistic/{id}', function (Request $request, $id) {
-    return Redis::set("statistics:" . $id . ":" . time(), $request->getContent());
-});
+Route::post('/player/statistic/{id}', [Controllers\StatisticController::class, 'addById']);
 
-// Сохранения статистики прохождения
-Route::get('/player/statistic/{id}', function ($id) {
-    $keys = Redis::keys("statistics:" . $id . ":*");
-    $keys = array_map(function ($k){
-        return str_replace('laravel_database_', '', $k);
-    }, $keys);
-    $scripts = Redis::mget($keys);
-    foreach ($scripts as $scriptId => $script) {
-        $scripts[$scriptId] = json_decode($script);
-    }
-    return response($scripts, 200)->header('Content-Type', 'application/json');
-});
+// Получение статистики прохождения по id программы
+Route::get('/player/statistic/{id}', [Controllers\StatisticController::class, 'getById']);
 
