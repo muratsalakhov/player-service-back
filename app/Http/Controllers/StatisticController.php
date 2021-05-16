@@ -23,10 +23,12 @@ class StatisticController extends Controller
         $keys = array_map(function ($k){
             return str_replace('laravel_database_', '', $k);
         }, $keys);
+
         $scripts = Redis::mget($keys);
         foreach ($scripts as $scriptId => $script) {
             $scripts[$scriptId] = json_decode($script);
         }
+
         return response($scripts, 200)->header('Content-Type', 'application/json');
     }
 }

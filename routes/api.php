@@ -46,6 +46,9 @@ Route::get('/player/script/', [Controllers\ScriptController::class, 'getAll']);
 // Получить сценарий по id
 Route::get('/player/script/{id}', [Controllers\ScriptController::class, 'getById']);
 
+// Сохранить сценарий по id
+Route::post('/player/script/{id}', [Controllers\ScriptController::class, 'addById']);
+
 // Сохранения статистики прохождения
 Route::post('/player/statistic/{id}', [Controllers\StatisticController::class, 'addById']);
 
