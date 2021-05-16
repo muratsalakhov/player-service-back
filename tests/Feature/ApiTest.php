@@ -24,6 +24,7 @@ class ApiTest extends TestCase
             ]);
         $response
             ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/json')
             ->assertJson(
                 [
                     'testScriptId' => 'testScriptId',
@@ -39,6 +40,7 @@ class ApiTest extends TestCase
         $response = $this->get('/api/player/script/test');
         $response
             ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/json')
             ->assertJson(
                 [
                     'testScriptId' => 'testScriptId',
@@ -54,6 +56,7 @@ class ApiTest extends TestCase
         $response = $this->get('/api/player/script/non-existing-id');
         $response
             ->assertStatus(404)
+            ->assertHeader('Content-Type', 'application/json')
             ->assertJson(
                 [
                     'status' => 'Script not found'
@@ -61,7 +64,7 @@ class ApiTest extends TestCase
             );
     }
 
-    public function testAddStatisticById()
+    /*public function testAddStatisticById()
     {
         $response = $this->postJson('/api/player/statistic/test',
             [
@@ -73,19 +76,23 @@ class ApiTest extends TestCase
         );
         $response
             ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/json')
             ->assertOk();
-    }
+    }*/
 
     public function testGetStatisticById()
     {
         $response = $this->get('/api/player/statistic/test');
         $response
             ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/json')
             ->assertJson(
                 [
-                    'testScript' => 'testScriptResult',
-                    'testFrames' => [
-                        'testFrame' => 'testFrameResult'
+                    [
+                        'testScript' => 'testScriptResult',
+                        'testFrames' => [
+                            'testFrame' => 'testFrameResult'
+                        ]
                     ]
                 ]
             );
