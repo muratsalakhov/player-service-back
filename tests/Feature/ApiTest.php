@@ -64,7 +64,7 @@ class ApiTest extends TestCase
             );
     }
 
-    /*public function testAddStatisticById()
+    public function testAddStatisticById()
     {
         $response = $this->postJson('/api/player/statistic/test',
             [
@@ -78,7 +78,7 @@ class ApiTest extends TestCase
             ->assertStatus(200)
             ->assertHeader('Content-Type', 'application/json')
             ->assertOk();
-    }*/
+    }
 
     public function testGetStatisticById()
     {
