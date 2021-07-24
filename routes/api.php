@@ -26,13 +26,6 @@ Route::get('/test/', function () {
     return Services\ProgramHandler::downloadProgramByUrl('http://127.0.0.1:84/zip/', storage_path() . '/app/public/5fc13fcaaa303a46ead63656/');
 });
 
-// ТЕСТ. Загрузить программу
-Route::get('/put-program/', function () {
-    $script = file_get_contents("/home/muratsalakhov/PhpstormProjects/player-service/player-api/storage/app/init_programs/api-chapter-mongo-id-new-2.json");
-    Redis::set("script:5fc13fcaaa303a46ead63656", $script);
-    return response(json_decode($script, true), 200)->header('Content-Type', 'application/json');
-});
-
 // Конвертировать изображения по переданному пути
 Route::put('/convert/', function (Request $request) {
     $requestBody = json_decode($request->getContent(), true);
@@ -54,4 +47,3 @@ Route::post('/player/statistic/{id}', [Controllers\StatisticController::class, '
 
 // Получение статистики прохождения по id программы
 Route::get('/player/statistic/{id}', [Controllers\StatisticController::class, 'getById']);
-

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Redis;
 class ProgramHandler
 {
     // скачать zip архив по ссылке
-    public static function downloadProgramByUrl(string $url = 'http://127.0.0.1:84/zip/', string $programPath) {
+    public static function downloadProgramByUrl(string $url, string $programPath) {
         set_time_limit(0);
         $timestamp = microtime(true);
 

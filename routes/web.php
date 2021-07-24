@@ -22,14 +22,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/init', function () {
-    $string = file_get_contents(dirname(getcwd()) . '/storage/app/init_programs/propusk.json');
-    //$json_a = json_decode($string, true);
-    Redis::set("program:5f930b092ad7da32748cb8bc", $string);
-    //Redis::bgsave();
-    $result = Redis::get(1);
-    echo $result;
-});
-
 // Выдача изображений
 Route::get('/data/{id}/{name}', [Controllers\ImageController::class, 'getImage']);
